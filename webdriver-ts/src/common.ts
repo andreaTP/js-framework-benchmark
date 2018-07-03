@@ -56,6 +56,7 @@ function f(name: string, keyed: boolean, options: Options = {uri: null, useShado
 }
 
 export let frameworks = [
+    f("akkajs-keyed", true),
     f("angular-light-v0.14.1-keyed", true),
     f("angular-v1.6.3-keyed", true),
     f("angular-v6.0.0-keyed", true),

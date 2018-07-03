@@ -1,0 +1,28 @@
+{
+  "name": "js-framework-benchmark-akkajs",
+  "version": "1.1.1",
+  "description": "Akka.JS demo",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack --watch",
+    "build-dev": "webpack -w -d",
+    "build-prod": "webpack"
+  },
+  "author": "Andrea Peruffo",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/krausest/js-framework-benchmark",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krausest/js-framework-benchmark.git"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-react-jsx": "latest",
+    "webpack": "^4.14.0",
+    "webpack-cli": "^3.0.8"
+  },
+  "dependencies": {
+    "akkajs-dom": "file:../../../akkajs-dom/akkajs-dom-0.1.0.tgz"
+  }
+}
