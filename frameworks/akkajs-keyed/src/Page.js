@@ -15,7 +15,7 @@ class Page extends DomActor {
     this.offset = 1
   }
   postMount () {
-    // this.table = this.spawn(new Table())
+    this.table = this.spawn(new Table(this.offset))
     
     this.spawn(new Button("run", "Create 1,000 rows", {create: 1000}))
     this.spawn(new Button("runlots", "Create 10,000 rows", {create: 10000}))
@@ -56,34 +56,13 @@ class Page extends DomActor {
   }
   receive (msg) {
     if (msg !== undefined) {
-      if (msg.create) {
-        try {
-          this.table.kill()
-        } catch (e) { }
-        this.self().tell({recreate: msg})
-      } else if (msg.clear) {
-        try {
-          this.table.kill()
-        } catch (e) { }
-        this.self().tell({recreate: true})
-      } else if (msg.recreate) {
-        try {
-          this.table = this.spawn(new Table(this.offset))
-          if (msg.recreate !== true) {
-            this.table.tell(msg.recreate)
-          }
-        } catch (e) {
-          this.self().tell(msg)
-        }
-      } else if (msg.offset) {
+      if (msg.offset != undefined) {
         this.offset = msg.offset
+      } else if (msg.clear) {
+        this.table.kill()
+        this.table = this.spawn(new Table(this.offset))
       } else {
-        try {
-          this.table.tell(msg)
-        } catch (e) {
-          this.table = this.spawn(new Table(this.offset))
-          this.table.tell(msg)
-        }
+        this.table.tell(msg)
       }
     }
   }
@@ -109,7 +88,6 @@ class Button extends DomActor {
 class Table extends DomActor {
   constructor (offset) {
     super("table")
-    this.name = "table"
     this.offset = offset
     this.rows = []
     this.selected = -1
@@ -118,18 +96,18 @@ class Table extends DomActor {
     return <tbody>
       {
         this.rows.map((row, pos) => {
-        return <tr className={row.selected ? 'danger' : ''}>
-          {[<td className="col-md-1">{row.index}</td>,
-            <td className="col-md-4">
-              <a id={pos} name="select">{row.label}</a>
-            </td>,
-            <td className="col-md-1">
-              <a>
-                <span id={pos} name="remove" className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-              </a>
-            </td>,
-            <td className="col-md-6"></td>]}
-        </tr>
+          return <tr className={row.selected ? 'danger' : ''}>
+            {[<td className="col-md-1">{row.index}</td>,
+              <td className="col-md-4">
+                <a id={pos} name="select">{row.label}</a>
+              </td>,
+              <td className="col-md-1">
+                <a>
+                  <span id={pos} name="remove" className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </a>
+              </td>,
+              <td className="col-md-6"></td>]}
+          </tr>
         })
       }
     </tbody>
@@ -138,9 +116,10 @@ class Table extends DomActor {
     return { "click": events.tableClick }
   }
   receive (msg) {
-    const startTime = performance.now()
     if (msg !== undefined) {
+      const startTime = performance.now()
       if (msg.create !== undefined) {
+        this.rows = []
         for (let i = this.offset; i < (this.offset + msg.create); i++) {
           this.rows.push({
             index: i,
@@ -182,9 +161,9 @@ class Table extends DomActor {
         }
       }
       this.update()
+      const stop = performance.now()
+      log.info("took " + (stop - startTime))
     }
-    const stop = performance.now()
-    log.info("took " + (stop - startTime))
   }
 }
 
