@@ -12,7 +12,17 @@ const rowClick = function (event) {
   }
 }
 
+const tableClick = function (event) {
+  event.preventDefault()
+  console.log("emitting event: ", event)
+  return {
+    click: event.target.id,
+    event: event.target.name
+  }
+}
+
 module.exports = {
   click,
-  rowClick
+  rowClick,
+  tableClick
 }
